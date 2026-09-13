@@ -23,7 +23,7 @@
 if(s==='dark'||s==='light')r.setAttribute('data-theme',s);}catch(e){}
 if('IntersectionObserver' in window&&matchMedia('(prefers-reduced-motion:no-preference)').matches){
 r.classList.add('js');setTimeout(function(){r.classList.remove('js');
-var n=document.querySelectorAll('.entry');for(var i=0;i<n.length;i++)n[i].classList.add('in');},2200);}})();
+var n=document.querySelectorAll('.entry,.led,.plate');for(var i=0;i<n.length;i++)n[i].classList.add('in');},2200);}})();
 </script>
 <style>
 /* ── LAYER 1 · raw material, measured from the brochure ─────── */
@@ -320,9 +320,72 @@ a{text-underline-offset:.2em;text-decoration-thickness:1px}
   .two figure img{aspect-ratio:3/2}
 }
 
+
+/* ═══ MOTION ═══════════════════════════════════════════════════
+   One orchestrated grammar, not scattered hovers. Everything below
+   refines an already-visible default and is fully disabled under
+   prefers-reduced-motion. */
+
+/* 1 · the hero breathes — a 28s drift, never a loop you can catch */
+@media (prefers-reduced-motion:no-preference){
+  .hero__img{animation:drift 28s var(--ease-soft) infinite alternate;transform-origin:58% 45%}
+  @keyframes drift{from{transform:scale(1.06) translate3d(0,0,0)}
+                   to{transform:scale(1.13) translate3d(-1.2%,-1.4%,0)}}
+}
+/* 2 · the hero line sets itself, word by word */
+.hero h1 .w{display:inline-block}
+@media (prefers-reduced-motion:no-preference){
+  .js .hero h1 .w{opacity:0;transform:translateY(.5em) rotate(1.2deg);
+    animation:setline .95s var(--ease) forwards;animation-delay:calc(var(--i) * 90ms + 150ms)}
+  @keyframes setline{to{opacity:1;transform:none}}
+  .js .hero__rule{transform-origin:left;animation:draw 1.1s var(--ease) .1s both}
+  @keyframes draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  .js .hero__sub{opacity:0;animation:setline .9s var(--ease) .62s forwards}
+}
+/* 3 · photographs wipe open rather than fade */
+@media (prefers-reduced-motion:no-preference){
+  .js .plate figure{clip-path:inset(0 0 100% 0);transition:clip-path 1.15s var(--ease)}
+  .js .plate.in figure{clip-path:inset(0 0 0 0)}
+  .js .plate img{transform:scale(1.12);transition:transform 1.4s var(--ease)}
+  .js .plate.in img{transform:scale(1)}
+  .js .plate.in a:hover img,.js .plate.in a:focus-visible img{transform:scale(1.045)}
+}
+/* 4 · ledger rows arrive in sequence, like entries being written */
+@media (prefers-reduced-motion:no-preference){
+  .js .led{opacity:0;transform:translateY(14px);
+    transition:opacity .75s var(--ease),transform .75s var(--ease),background-color .4s var(--ease)}
+  .js .led.in{opacity:1;transform:none}
+  .js .led__m{transition:color .4s var(--ease),letter-spacing .5s var(--ease)}
+  .js .led:hover .led__m{letter-spacing:.2em;color:var(--accent-warm)}
+}
+/* 5 · the figures counted up on the record strip */
+.num{display:inline-block;font-variant-numeric:tabular-nums}
+/* 6 · the client marquee — the record, always running */
+.ticker{overflow:hidden;position:relative;padding:1.6rem 0;
+  border-top:1px solid var(--rule-on-deep);border-bottom:1px solid var(--rule-on-deep);
+  margin-top:clamp(2.5rem,5vw,4rem);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.ticker__t{display:flex;gap:0;width:max-content}
+.ticker__g{display:flex;gap:3.2rem;padding-right:3.2rem;align-items:center;flex:none}
+.ticker span{white-space:nowrap;font-size:.95rem;letter-spacing:.02em;color:var(--text-soft-on-deep)}
+.ticker span::after{content:"·";margin-left:3.2rem;color:var(--accent-on-deep)}
+@media (prefers-reduced-motion:no-preference){
+  .ticker__t{animation:run 58s linear infinite}
+  .ticker:hover .ticker__t{animation-play-state:paused}
+  @keyframes run{to{transform:translateX(-50%)}}
+}
+/* 7 · every interactive surface answers */
+.strip__i{transition:background-color .45s var(--ease)}
+.strip__i:hover{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.col li{transition:color .3s var(--ease),padding-left .35s var(--ease)}
+.col li:hover{color:var(--accent-on-deep);padding-left:.4rem}
+
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-  .entry{opacity:1!important;transform:none!important}
+  .entry,.led,.plate figure,.hero h1 .w,.hero__sub{opacity:1!important;transform:none!important;
+    clip-path:none!important;animation:none!important}
+  .ticker__t{animation:none!important}
 }
 </style>
 </head>
@@ -337,13 +400,13 @@ a{text-underline-offset:.2em;text-decoration-thickness:1px}
 <img src="/assets/hero-facade.jpg" alt="Glass curtain-wall facade rising against a deep blue sky" width="1800" height="1080" sizes="100vw" loading="eager" fetchpriority="high" class="hero__img">
 <div class="wrap">
 <div class="hero__rule"></div>
-<h1>We do not hand over and leave.</h1>
+<h1><span class="w" style="--i:0">We</span> <span class="w" style="--i:1">do</span> <span class="w" style="--i:2">not</span> <span class="w" style="--i:3">hand</span> <span class="w" style="--i:4">over</span> <span class="w" style="--i:5">and</span> <span class="w" style="--i:6">leave.</span> </h1>
 <p class="hero__sub">A New Delhi atelier that designs, builds and then maintains &mdash; interiors, restoration and civil construction for hospitality, institutions and private estates.</p>
 </div></section>
 
 <section class="strip" aria-label="At a glance"><div class="wrap">
-<div class="strip__i"><div class="strip__k">Working since</div><div class="strip__v"><b>1983</b> &mdash; as a maintenance business, first</div></div>
-<div class="strip__i"><div class="strip__k">Typical client tenure</div><div class="strip__v"><b>10&ndash;15</b> years</div></div>
+<div class="strip__i"><div class="strip__k">Working since</div><div class="strip__v"><b class="num" data-to="1983">1983</b> &mdash; as a maintenance business, first</div></div>
+<div class="strip__i"><div class="strip__k">Typical client tenure</div><div class="strip__v"><b><span class="num" data-to="10">10</span>&ndash;<span class="num" data-to="15">15</span></b> years</div></div>
 <div class="strip__i"><div class="strip__k">Scope</div><div class="strip__v">Design &middot; Build &middot; Maintain</div></div>
 <div class="strip__cta"><a href="tel:+91-98105-08710">+91 98105 08710</a></div>
 </div></section>
@@ -351,12 +414,12 @@ a{text-underline-offset:.2em;text-decoration-thickness:1px}
 <section class="band"><div class="wrap">
 <div class="bhead"><h2>Six lines of work. The oldest one is maintenance.</h2>
 <p>Anyone can fit out a building once. The entry below that reads 1983 is the one competitors cannot copy.</p></div>
-<article class="led entry"><div class="led__m">Since 1983</div><h3 class="led__t"><a href="/services/facility-maintenance/">White-Glove Facility Maintenance</a></h3><p class="led__d">The quiet caretakers of Delhi's most refined spaces</p></article><article class="led entry"><div class="led__m">Since 2012</div><h3 class="led__t"><a href="/services/interior-fit-out/">Turnkey Execution &amp; Site Supervision</a></h3><p class="led__d">Turnkey fit-out, managed end to end</p></article><article class="led entry"><div class="led__m">Since 2012</div><h3 class="led__t"><a href="/services/interior-design/">Interior Architecture &amp; Bespoke Design</a></h3><p class="led__d">Interiors tailored to how you live</p></article><article class="led entry"><div class="led__m">Since 2012</div><h3 class="led__t"><a href="/services/architectural-restoration/">Architectural Restoration</a></h3><p class="led__d">Restoration, not redecoration</p></article><article class="led entry"><div class="led__m">Since 2012</div><h3 class="led__t"><a href="/services/civil-construction/">Structural &amp; Civil Construction</a></h3><p class="led__d">Strength without aesthetic compromise</p></article><article class="led entry"><div class="led__m">Since 2012</div><h3 class="led__t"><a href="/services/furniture-lighting/">Furniture &amp; Lighting Atelier</a></h3><p class="led__d">Objects that become heirlooms</p></article>
+<article class="led"><div class="led__m">Since 1983</div><h3 class="led__t"><a href="/services/facility-maintenance/">White-Glove Facility Maintenance</a></h3><p class="led__d">The quiet caretakers of Delhi's most refined spaces</p></article><article class="led"><div class="led__m">Since 2012</div><h3 class="led__t"><a href="/services/interior-fit-out/">Turnkey Execution &amp; Site Supervision</a></h3><p class="led__d">Turnkey fit-out, managed end to end</p></article><article class="led"><div class="led__m">Since 2012</div><h3 class="led__t"><a href="/services/interior-design/">Interior Architecture &amp; Bespoke Design</a></h3><p class="led__d">Interiors tailored to how you live</p></article><article class="led"><div class="led__m">Since 2012</div><h3 class="led__t"><a href="/services/architectural-restoration/">Architectural Restoration</a></h3><p class="led__d">Restoration, not redecoration</p></article><article class="led"><div class="led__m">Since 2012</div><h3 class="led__t"><a href="/services/civil-construction/">Structural &amp; Civil Construction</a></h3><p class="led__d">Strength without aesthetic compromise</p></article><article class="led"><div class="led__m">Since 2012</div><h3 class="led__t"><a href="/services/furniture-lighting/">Furniture &amp; Lighting Atelier</a></h3><p class="led__d">Objects that become heirlooms</p></article>
 </div></section>
 
 <section class="band band--raised"><div class="wrap">
 <div class="bhead"><h2>Selected work</h2><p>From the record. All photography is of our own projects.</p></div>
-<div class="plates"><article class="plate entry"><a href="/work/galgotias-school-of-hospitality/" style="text-decoration:none"><figure><img src="/assets/galgotias-sign.jpg" alt="Galgotias School of Hospitality, Greater Noida — Scintillate 360" width="1038" height="1400" sizes="(min-width:920px) 50vw, 100vw" loading="lazy" decoding="async"></figure><div class="plate__meta"><span class="plate__y">Greater Noida</span><h3 class="plate__t">Galgotias School of Hospitality</h3></div></a><p class="plate__n">Scintillate 360 converted a working section of the campus into a fully functioning hotel &mdash; not a mock-up, a real one. A front office and reception lab built to&hellip;</p></article><article class="plate entry"><a href="/work/lutyens-bungalow-restoration/" style="text-decoration:none"><figure><img src="/assets/lutyens-stair.jpg" alt="Restored Lutyens Bungalow, New Delhi — Scintillate 360" width="1051" height="1400" sizes="(min-width:920px) 50vw, 100vw" loading="lazy" decoding="async"></figure><div class="plate__meta"><span class="plate__y">New Delhi</span><h3 class="plate__t">Restored Lutyens Bungalow</h3></div></a><p class="plate__n">A ground-up restoration, not a redecoration. This Lutyens-era bungalow came to Scintillate 360 in need of real structural intervention &mdash; brought up to modern s&hellip;</p></article><article class="plate entry"><a href="/work/hospitality-interiors/" style="text-decoration:none"><figure><img src="/assets/hosp-rooftop.jpg" alt="Hospitality and Dining Interiors, Delhi, Goa and Kathmandu — Scintillate 360" width="905" height="1200" sizes="(min-width:920px) 50vw, 100vw" loading="lazy" decoding="async"></figure><div class="plate__meta"><span class="plate__y">Delhi, Goa &amp; Kathmandu</span><h3 class="plate__t">Hospitality &amp; Dining Interiors</h3></div></a><p class="plate__n">Hospitality interiors are built to be used hard and to keep looking new. A dining room takes three services a day; a bar back takes spills and heat; a rooftop takes &hellip;</p></article><article class="plate entry"><a href="/work/private-kitchens/" style="text-decoration:none"><figure><img src="/assets/kitchen-island.jpg" alt="Private Kitchens, New Delhi — Scintillate 360" width="1059" height="1400" sizes="(min-width:920px) 50vw, 100vw" loading="lazy" decoding="async"></figure><div class="plate__meta"><span class="plate__y">New Delhi</span><h3 class="plate__t">Private Kitchens</h3></div></a><p class="plate__n">Our kitchens are functional showpieces. Every modular unit, handle, light and backsplash is personalised for ergonomic ease and European-style refinement.&hellip;</p></article></div>
+<div class="plates"><article class="plate"><a href="/work/galgotias-school-of-hospitality/" style="text-decoration:none"><figure><img src="/assets/galgotias-sign.jpg" alt="Galgotias School of Hospitality, Greater Noida — Scintillate 360" width="1038" height="1400" sizes="(min-width:920px) 50vw, 100vw" loading="lazy" decoding="async"></figure><div class="plate__meta"><span class="plate__y">Greater Noida</span><h3 class="plate__t">Galgotias School of Hospitality</h3></div></a><p class="plate__n">Scintillate 360 converted a working section of the campus into a fully functioning hotel &mdash; not a mock-up, a real one. A front office and reception lab built to&hellip;</p></article><article class="plate"><a href="/work/lutyens-bungalow-restoration/" style="text-decoration:none"><figure><img src="/assets/lutyens-stair.jpg" alt="Restored Lutyens Bungalow, New Delhi — Scintillate 360" width="1051" height="1400" sizes="(min-width:920px) 50vw, 100vw" loading="lazy" decoding="async"></figure><div class="plate__meta"><span class="plate__y">New Delhi</span><h3 class="plate__t">Restored Lutyens Bungalow</h3></div></a><p class="plate__n">A ground-up restoration, not a redecoration. This Lutyens-era bungalow came to Scintillate 360 in need of real structural intervention &mdash; brought up to modern s&hellip;</p></article><article class="plate"><a href="/work/hospitality-interiors/" style="text-decoration:none"><figure><img src="/assets/hosp-rooftop.jpg" alt="Hospitality and Dining Interiors, Delhi, Goa and Kathmandu — Scintillate 360" width="905" height="1200" sizes="(min-width:920px) 50vw, 100vw" loading="lazy" decoding="async"></figure><div class="plate__meta"><span class="plate__y">Delhi, Goa &amp; Kathmandu</span><h3 class="plate__t">Hospitality &amp; Dining Interiors</h3></div></a><p class="plate__n">Hospitality interiors are built to be used hard and to keep looking new. A dining room takes three services a day; a bar back takes spills and heat; a rooftop takes &hellip;</p></article><article class="plate"><a href="/work/private-kitchens/" style="text-decoration:none"><figure><img src="/assets/kitchen-island.jpg" alt="Private Kitchens, New Delhi — Scintillate 360" width="1059" height="1400" sizes="(min-width:920px) 50vw, 100vw" loading="lazy" decoding="async"></figure><div class="plate__meta"><span class="plate__y">New Delhi</span><h3 class="plate__t">Private Kitchens</h3></div></a><p class="plate__n">Our kitchens are functional showpieces. Every modular unit, handle, light and backsplash is personalised for ergonomic ease and European-style refinement.&hellip;</p></article></div>
 <p style="margin-top:3rem"><a href="/work/" style="color:var(--accent-text);text-decoration:none;border-bottom:2px solid var(--accent);padding-bottom:.2rem;font-size:1.02rem">See the full record</a></p>
 </div></section>
 
@@ -364,6 +427,7 @@ a{text-underline-offset:.2em;text-decoration-thickness:1px}
 <div class="bhead" style="border-color:var(--accent-on-invert)"><h2>Relationships, not accounts.</h2>
 <p>Long-term associations of ten to fifteen years, across hospitality, industry and public institutions.</p></div>
 <div class="cols"><div class="col"><h3>Hospitality &amp; Dining</h3><ul><li>Taj Vivanta, Kathmandu</li><li>Park Inn by Radisson</li><li>The Palace Heights Hotel</li><li>Constitution Club of India</li><li>Chelmsford Club</li><li>Gola Sizzlers</li><li>Rudy's Bar &amp; Grill, Goa</li><li>Kasbah</li><li>The Host</li></ul></div><div class="col"><h3>Corporate &amp; Commercial</h3><ul><li>RICO Auto Industries</li><li>Sandhar Technologies</li><li>Hi-Tech Gears</li><li>Vulcan Electro Controls</li><li>Autofit</li><li>AG Industries</li><li>Napino</li><li>White Domus</li></ul></div><div class="col"><h3>Government &amp; Institutions</h3><ul><li>Galgotias University</li><li>Galgotias College of Engineering</li><li>Fortis Hospital, Noida</li><li>Safdarjung Hospital</li><li>Constitution Club of India</li></ul></div></div>
+<div class="ticker" aria-hidden="true"><div class="ticker__t"><div class="ticker__g"><span>Taj Vivanta, Kathmandu</span><span>Park Inn by Radisson</span><span>The Palace Heights Hotel</span><span>Constitution Club of India</span><span>Chelmsford Club</span><span>Gola Sizzlers</span><span>Rudy's Bar &amp; Grill, Goa</span><span>Kasbah</span><span>The Host</span><span>RICO Auto Industries</span><span>Sandhar Technologies</span><span>Hi-Tech Gears</span><span>Vulcan Electro Controls</span><span>Autofit</span><span>AG Industries</span><span>Napino</span><span>White Domus</span><span>Galgotias University</span><span>Galgotias College of Engineering</span><span>Fortis Hospital, Noida</span><span>Safdarjung Hospital</span></div><div class="ticker__g"><span>Taj Vivanta, Kathmandu</span><span>Park Inn by Radisson</span><span>The Palace Heights Hotel</span><span>Constitution Club of India</span><span>Chelmsford Club</span><span>Gola Sizzlers</span><span>Rudy's Bar &amp; Grill, Goa</span><span>Kasbah</span><span>The Host</span><span>RICO Auto Industries</span><span>Sandhar Technologies</span><span>Hi-Tech Gears</span><span>Vulcan Electro Controls</span><span>Autofit</span><span>AG Industries</span><span>Napino</span><span>White Domus</span><span>Galgotias University</span><span>Galgotias College of Engineering</span><span>Fortis Hospital, Noida</span><span>Safdarjung Hospital</span></div></div></div>
 </div></section>
 <section class="close"><div class="wrap">
 <h2>Tell us about the building.</h2>
@@ -380,10 +444,18 @@ a{text-underline-offset:.2em;text-decoration-thickness:1px}
 if(b)b.addEventListener('click',function(){var d=r.getAttribute('data-theme')==='dark'||
 (!r.getAttribute('data-theme')&&!matchMedia('(prefers-color-scheme:light)').matches);
 var n=d?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('sf-rec',n);}catch(e){}});
-if(!r.classList.contains('js'))return;var els=document.querySelectorAll('.entry');
+if(!r.classList.contains('js'))return;var els=document.querySelectorAll('.entry,.led,.plate');
 var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){
 x.target.classList.add('in');io.unobserve(x.target);}})},{rootMargin:'0px 0px -10% 0px'});
-els.forEach(function(e){io.observe(e)});})();
+els.forEach(function(e){io.observe(e)});
+var nums=document.querySelectorAll('.num');
+var nio=new IntersectionObserver(function(en){en.forEach(function(x){
+if(!x.isIntersecting)return;nio.unobserve(x.target);
+var el=x.target,to=parseInt(el.getAttribute('data-to'),10),t0=performance.now(),D=1100;
+function step(now){var k=Math.min(1,(now-t0)/D);var e2=1-Math.pow(1-k,3);
+el.textContent=Math.round(to*e2);if(k<1)requestAnimationFrame(step);else el.textContent=to;}
+requestAnimationFrame(step);})},{rootMargin:'0px 0px -15% 0px'});
+nums.forEach(function(e){nio.observe(e)});})();
 </script>
 </body>
 </html>
